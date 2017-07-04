@@ -35,7 +35,7 @@ void ATankPlayerController::AimTowardsCrosshair() {
 
 	FVector HitLocation; // Out Parameter
 	if (bGetSightRayHitLocation(HitLocation)) { // Has "side-effect", is going to line trace
-		//UE_LOG(LogTemp, Warning, TEXT("HitLocation: %s"), *(HitLocation.ToString()))
+		UE_LOG(LogTemp, Warning, TEXT("Hit Location: %s"), *(HitLocation.ToString()))
 		// TODO Tell controlled tank to aim at this point
 	}
 }
@@ -50,11 +50,30 @@ bool ATankPlayerController::bGetSightRayHitLocation(FVector& OutHitLocation) con
 	// "De-project" the screen position of the crosshair to a world direction
 	FVector LookDirection;
 	if (bGetLookDirection(ScreenLocation, LookDirection)) {
-		UE_LOG(LogTemp, Warning, TEXT("Look Direction: %s"), *(LookDirection.ToString()))
+		// Line-trace along that LookDirection, and see what we hit (up to max range)
+		//UE_LOG(LogTemp, Warning, TEXT("Look Direction: %s"), *(LookDirection.ToString()))
+		bGetLookVectorHitLocation(LookDirection, OutHitLocation);
 	}
 
-	// Line-trace along that LookDirection, and see what we hit (up to max range)
 	return true;
+}
+
+bool ATankPlayerController::bGetLookVectorHitLocation(FVector LookDirection, FVector& HitLocation) const {
+	FHitResult HitResult;
+	FVector StartLocation = PlayerCameraManager->GetCameraLocation();
+	FVector EndLocation = StartLocation + (LookDirection * LineTraceRange);
+	if (GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		StartLocation,
+		EndLocation,
+		ECollisionChannel::ECC_Visibility
+	)) {
+		HitLocation = HitResult.Location;
+		return true;
+	}
+
+	HitLocation = FVector(0.0F);
+	return false; // Line-trace didn't succeed
 }
 
 bool ATankPlayerController::bGetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const {
