@@ -2,14 +2,13 @@
 
 #include "BattleTank.h"
 #include "TankAimingComponent.h"
-#include "Tank.h"
 #include "TankPlayerController.h"
 
 
 void ATankPlayerController::BeginPlay() {
 	Super::BeginPlay();
 
-	auto AimingComponent = GetControlledTank()->FindComponentByClass<UTankAimingComponent>();
+	auto AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
 	if (!ensure(AimingComponent)) {
 		return;
 	}
@@ -23,18 +22,18 @@ void ATankPlayerController::Tick(float DeltaTime) {
 	//UE_LOG(LogTemp, Warning, TEXT("Player controller ticking"))
 }
 
-ATank* ATankPlayerController::GetControlledTank() const {
-	return Cast<ATank>(GetPawn());
-}
-
 void ATankPlayerController::AimTowardsCrosshair() {
-	if (!ensure(GetControlledTank())) {
+	if (!ensure(GetPawn())) { return; } // Fix the issue with BP_TankPlayerController when open it
+
+	auto AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
+
+	if (!ensure(AimingComponent)) {
 		return;
 	}
 
 	FVector HitLocation; // Out Parameter
 	if (bGetSightRayHitLocation(HitLocation)) { // Has "side-effect", is going to line trace
-		GetControlledTank()->AimAt(HitLocation);
+		AimingComponent->AimAt(HitLocation);
 	}
 }
 
