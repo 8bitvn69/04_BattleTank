@@ -5,11 +5,6 @@
 #include "GameFramework/Pawn.h"
 #include "Tank.generated.h" // Put new includes above
 
-// Forward Declarations
-class UTankMovementComponent;
-class UTankBarrel;
-class UTankTurret;
-class AProjectile;
 
 /**
  * 
@@ -31,22 +26,4 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UFUNCTION(BlueprintCallable, Category = "Firing")
-	void Fire();
-	
-private:
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	TSubclassOf<AProjectile> ProjectileBlueprint;
-
-	// TODO remove once firing is moved to aiming component
-	UPROPERTY(EditDefaultsOnly, Category = "Firing")
-	float LaunchSpeed = 4000.0F;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Firing")
-	float ReloadTimeInSeconds = 3.0F;
-
-	// Local barrel reference for spawning projectile
-	UTankBarrel* Barrel = nullptr; // TODO remove
-
-	double LastFireTime = 0.0;
 };
