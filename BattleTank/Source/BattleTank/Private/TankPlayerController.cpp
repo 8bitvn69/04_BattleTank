@@ -23,7 +23,7 @@ void ATankPlayerController::Tick(float DeltaTime) {
 }
 
 void ATankPlayerController::AimTowardsCrosshair() {
-	if (!ensure(GetPawn())) { return; } // Fix the issue with BP_TankPlayerController when open it
+	if (!ensure(GetPawn())) { return; } // Fix the issue with BP_TankPlayerController when open it, e.g. if not possessing
 
 	auto AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
 
