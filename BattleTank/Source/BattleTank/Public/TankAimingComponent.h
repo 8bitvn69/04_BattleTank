@@ -39,6 +39,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Firing")
 	void Fire();
+
+	EFiringState GetFiringState() const;
 	
 private:
 	// Sets default values for this component's properties
