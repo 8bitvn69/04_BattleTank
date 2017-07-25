@@ -17,12 +17,16 @@ void ATankAIController::SetPawn(APawn* InPawn) {
 		ATank* PossessedTank = Cast<ATank>(InPawn);
 
 		if (!ensure(PossessedTank)) { return; }
+
+		// Subscribe our local method to the tank's death event
 		PossessedTank->OnDeath.AddDynamic(this, &ATankAIController::OnPossedTankDeath); // Can use AddUniqueDynamic instead
 	}
 }
 
 void ATankAIController::OnPossedTankDeath() {
-	UE_LOG(LogTemp, Warning, TEXT("Received!"))
+	if (!(GetPawn())) { return; }
+
+	GetPawn()->DetachFromControllerPendingDestroy();
 }
 
 void ATankAIController::Tick(float DeltaTime) {
